@@ -18,9 +18,28 @@
 
 ### 설치 방법
 
+#### Windows 사용자
+1. Git 설치
+   - [Git for Windows](https://git-scm.com/download/win)를 다운로드하여 설치
+   - 설치 과정에서 기본 옵션 선택
+
+2. Python 설치
+   - [Python 공식 웹사이트](https://www.python.org/downloads/)에서 Python 3.8 이상 버전 다운로드
+   - 설치 시 "Add Python to PATH" 옵션 체크
+
+3. 저장소 클론 및 실행:
+   - PowerShell이나 Command Prompt를 관리자 권한으로 실행
+   - 원하는 디렉토리로 이동 후 다음 명령어 실행:
+```powershell
+git clone https://github.com/joonwoopapa/KD.git
+cd KD
+run.bat
+```
+
+#### Linux/Mac 사용자
 1. 저장소 클론:
 ```bash
-git clone [repository-url]
+git clone https://github.com/joonwoopapa/KD.git
 cd KD
 ```
 
@@ -31,7 +50,14 @@ pip install -r requirements.txt
 
 ### 실행 방법
 
-애플리케이션 실행:
+#### Windows
+- 클론한 디렉토리에서 `run.bat` 파일을 더블클릭
+- 또는 PowerShell/Command Prompt에서 다음 명령어 실행:
+```powershell
+run.bat
+```
+
+#### Linux/Mac
 ```bash
 streamlit run app.py
 ```
