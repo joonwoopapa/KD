@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: kd-prediction
+    runtime: docker
+    region: singapore
+    plan: free
+    healthCheckPath: /_stcore/health
+    envVars:
+      - key: PORT
+        value: 8501
+    dockerCommand: streamlit run app.py --server.address=0.0.0.0 
