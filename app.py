@@ -25,6 +25,20 @@ st.set_page_config(layout="wide", initial_sidebar_state="collapsed")
 # Load CSS
 load_css()
 
+# Add logo and title in the same row
+col1, col2 = st.columns([3, 7])
+with col1:
+    st.markdown('<div style="padding-top: 30px;">', unsafe_allow_html=True)
+    st.image('snuh_nukki.png', width=400)
+    st.markdown('</div>', unsafe_allow_html=True)
+with col2:
+    st.markdown('<h1 style="margin-top: 50px; text-align: left; margin-left: -8rem;">IVIG Resistance & Coronary Aneurysm Risk Prediction</h1>', unsafe_allow_html=True)
+
+# Add sidebar maintainer info
+with st.sidebar:
+    st.markdown('<h3 style="color: white;">Maintainer</h3>', unsafe_allow_html=True)
+    st.markdown('<p style="color: white;">Wooyoung, Park</p>', unsafe_allow_html=True)
+
 # Initialize session state for field validation
 if 'invalid_fields' not in st.session_state:
     st.session_state.invalid_fields = set()
