@@ -47,7 +47,6 @@ if 'invalid_fields' not in st.session_state:
 predictor = KDPredictor()
 
 # Render page layout
-render_page_header()
 render_required_notice()
 render_debug_info()
 
