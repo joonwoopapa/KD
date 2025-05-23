@@ -4,10 +4,10 @@ FEATURES = {
         'title': 'Blood Test',
         'fields': {
             'Lympho_before': 'Lymphocyte (%)',
+            'Seg_before': 'Neutrophil (%)',
             'PLT_before': 'Platelet count(10^3/ml)',
             'Chol_before': 'Cholesterol(mg/dL)',
             'CRP_before': 'CRP(mg/dL)',
-            'Seg_before': 'Neutrophil (%)',
             'TB_before': 'Total bilirubin(mg/dL)',
             'P_before': 'Phosphorus(mg/dL)',
             'ANC_before': 'Absolute Neutrophil count(10^9/L)'

@@ -61,10 +61,10 @@ http://localhost:8501
 
 ### 혈액검사
 - Lymphocyte (%)
+- Neutrophil (%)
 - Platelet count (10^3/ml)
 - Cholesterol (mg/dL)
 - CRP (mg/dL)
-- Neutrophil (%)
 - Total bilirubin (mg/dL)
 - Phosphorus (mg/dL)
 - Absolute Neutrophil count (10^9/L)
