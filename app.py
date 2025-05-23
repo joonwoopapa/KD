@@ -1,43 +1,79 @@
-
 import streamlit as st
-import pandas as pd
-import joblib
-import shap
-import matplotlib.pyplot as plt
+import sys
+import os
+import traceback
 
-st.set_page_config(layout="wide")
-st.title("IVIG Resistance & Coronary Aneurysm Risk Prediction")
+from src.config import FEATURES
+from src.models import KDPredictor
+from src.utils import load_css, validate_input_data
+from src.components import (
+    render_page_header,
+    render_required_notice,
+    render_debug_info,
+    render_input_sections,
+    render_predict_button
+)
+from src.visualization import (
+    display_prediction_cards,
+    display_combined_shap_analysis,
+    display_detailed_shap_analysis
+)
 
-model = joblib.load("multi_model.pkl")
-explainer_ivig = joblib.load("explainer_ivig.pkl")
-explainer_aneurysm = joblib.load("explainer_aneurysm.pkl")
+# Must be the first Streamlit command
+st.set_page_config(layout="wide", initial_sidebar_state="collapsed")
 
-features = [
-    'Lympho_before', 'PLT_before', 'Chol_before', 'CRP_before',
-    'Seg_before', 'TB_before', 'P_before', 'ANC_before',
-    'initial_echo_RCA_Z', 'initial_echo_LMCA_Z', 'initial_echo_LAD_Z', 'fever_duration'
-]
+# Load CSS
+load_css()
 
-input_data = {feat: st.number_input(feat, value=0.0) for feat in features}
-X_input = pd.DataFrame([input_data])
+# Initialize session state for field validation
+if 'invalid_fields' not in st.session_state:
+    st.session_state.invalid_fields = set()
 
-if st.button("Predict"):
-    y_pred_proba = model.predict_proba(X_input)
-    st.subheader("Prediction Results")
-    st.markdown(f"**IVIG Resistance Probability:** {y_pred_proba[0][0][1]:.2%}")
-    st.markdown(f"**Coronary Aneurysm Probability:** {y_pred_proba[1][0][1]:.2%}")
+# Initialize predictor
+predictor = KDPredictor()
 
-    st.subheader("SHAP Explanation: IVIG Resistance")
-    shap_values_ivig = explainer_ivig(X_input)
-    fig1 = shap.plots.waterfall(shap_values_ivig[0], show=False)
-    st.pyplot(fig1)
-    force_html_ivig = shap.plots.force(shap_values_ivig[0], matplotlib=False).html()
-    st.components.v1.html(shap.getjs(), height=0)
-    st.components.v1.html(force_html_ivig, height=300)
+# Render page layout
+render_page_header()
+render_required_notice()
+render_debug_info()
 
-    st.subheader("SHAP Explanation: Coronary Aneurysm")
-    shap_values_aneurysm = explainer_aneurysm(X_input)
-    fig2 = shap.plots.waterfall(shap_values_aneurysm[0], show=False)
-    st.pyplot(fig2)
-    force_html_aneurysm = shap.plots.force(shap_values_aneurysm[0], matplotlib=False).html()
-    st.components.v1.html(force_html_aneurysm, height=300)
+# Render input sections and collect data
+input_data = render_input_sections(FEATURES, st.session_state.invalid_fields)
+
+# Render predict button
+if render_predict_button():
+    # Clear previous invalid fields
+    st.session_state.invalid_fields.clear()
+    
+    # Validate input data
+    invalid_fields = validate_input_data(input_data, FEATURES)
+    
+    if invalid_fields:
+        st.session_state.invalid_fields = invalid_fields
+        st.error("❌ Required fields are missing. Please check the fields highlighted in red.")
+        st.rerun()
+    else:
+        try:
+            with st.spinner('Calculating predictions...'):
+                # Get predictions and SHAP values
+                results = predictor.predict(input_data)
+                
+                # Display prediction results
+                display_prediction_cards(results['probabilities'])
+
+                # SHAP Explanations
+                st.markdown("### Model Explanations")
+                tabs = st.tabs(["Overall View", "IVIG Resistance", "Coronary Aneurysm"])
+                
+                with tabs[0]:
+                    display_combined_shap_analysis(results['shap_values'])
+                
+                with tabs[1:]:
+                    display_detailed_shap_analysis(results['shap_values'])
+
+        except Exception as e:
+            with st.sidebar:
+                with st.expander("🔧 Debug Information", expanded=True):
+                    st.error(f"Prediction Error: {str(e)}")
+                    st.error("Full error details:")
+                    st.code(traceback.format_exc())
