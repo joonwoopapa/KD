@@ -13,19 +13,21 @@
 
 ### 필수 요구사항
 
-- Python 3.8 이상
-- pip (Python 패키지 관리자)
+- Docker Desktop
+  - Windows: [Docker Desktop for Windows](https://docs.docker.com/desktop/install/windows-install/)
+  - Mac: [Docker Desktop for Mac](https://docs.docker.com/desktop/install/mac-install/)
+  - Linux: [Docker Engine](https://docs.docker.com/engine/install/) + [Docker Compose](https://docs.docker.com/compose/install/)
 
-### 설치 방법
+### 설치 및 실행 방법
 
 #### Windows 사용자
 1. Git 설치
    - [Git for Windows](https://git-scm.com/download/win)를 다운로드하여 설치
    - 설치 과정에서 기본 옵션 선택
 
-2. Python 설치
-   - [Python 공식 웹사이트](https://www.python.org/downloads/)에서 Python 3.8 이상 버전 다운로드
-   - 설치 시 "Add Python to PATH" 옵션 체크
+2. Docker Desktop 설치
+   - [Docker Desktop for Windows](https://docs.docker.com/desktop/install/windows-install/) 설치
+   - 설치 완료 후 시스템 재시작
 
 3. 저장소 클론 및 실행:
    - PowerShell이나 Command Prompt를 관리자 권한으로 실행
@@ -33,7 +35,7 @@
 ```powershell
 git clone https://github.com/joonwoopapa/KD.git
 cd KD
-run.bat
+docker compose up
 ```
 
 #### Linux/Mac 사용자
@@ -43,23 +45,16 @@ git clone https://github.com/joonwoopapa/KD.git
 cd KD
 ```
 
-2. 필요한 패키지 설치:
+2. Docker Compose로 실행:
 ```bash
-pip install -r requirements.txt
+docker compose up
 ```
 
-### 실행 방법
+### 접속 방법
 
-#### Windows
-- 클론한 디렉토리에서 `run.bat` 파일을 더블클릭
-- 또는 PowerShell/Command Prompt에서 다음 명령어 실행:
-```powershell
-run.bat
+애플리케이션이 실행되면 웹 브라우저에서 다음 주소로 접속:
 ```
-
-#### Linux/Mac
-```bash
-streamlit run app.py
+http://localhost:8501
 ```
 
 ## 입력 데이터
