@@ -2,6 +2,13 @@ import joblib
 import pandas as pd
 from .config import MODEL_PATH, EXPLAINER_IVIG_PATH, EXPLAINER_ANEURYSM_PATH
 
+# Define the expected feature order
+EXPECTED_FEATURES = [
+    'Lympho_before', 'Seg_before', 'PLT_before', 'Chol_before', 'CRP_before',
+    'TB_before', 'P_before', 'ANC_before', 'initial_echo_RCA_Z',
+    'initial_echo_LMCA_Z', 'initial_echo_LAD_Z', 'fever_duration'
+]
+
 class KDPredictor:
     def __init__(self):
         self.model = None
@@ -29,8 +36,14 @@ class KDPredictor:
             tuple: (predictions, shap_values_ivig, shap_values_aneurysm)
         """
         try:
-            # Create DataFrame from input
-            X_input = pd.DataFrame([input_data])
+            # Create DataFrame and ensure column order matches model's expectations
+            df = pd.DataFrame([input_data])
+            
+            # Get the feature names from the model
+            model_features = self.model.estimators_[0].feature_names_in_
+            
+            # Reorder columns to match model's feature order
+            X_input = df[model_features]
             
             # Get predictions
             y_pred_proba = self.model.predict_proba(X_input)

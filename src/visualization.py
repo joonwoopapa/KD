@@ -81,27 +81,23 @@ def display_combined_shap_analysis(shap_values: dict):
     Features are ordered by their absolute impact in each plot, with the most influential features at the top.
     """)
 
-def display_detailed_shap_analysis(shap_values: dict):
-    """Display detailed SHAP analysis for individual predictions."""
-    tabs = st.tabs(["IVIG Resistance", "Coronary Aneurysm"])
+def display_detailed_shap_analysis(shap_values: dict, prediction_type: str):
+    """Display detailed SHAP analysis for a specific prediction type."""
+    if prediction_type == 'ivig':
+        title = "IVIG Resistance Prediction"
+        values = shap_values['ivig']
+    else:
+        title = "Coronary Aneurysm Prediction"
+        values = shap_values['aneurysm']
     
-    with tabs[0]:
-        st.markdown("#### SHAP Explanation: IVIG Resistance")
-        plot_shap_waterfall(
-            shap_values['ivig'],
-            "Feature Contributions to IVIG Resistance Prediction",
-            WATERFALL_PLOT_SIZE_SINGLE
-        )
-        _display_waterfall_explanation("IVIG resistance")
-
-    with tabs[1]:
-        st.markdown("#### SHAP Explanation: Coronary Aneurysm")
-        plot_shap_waterfall(
-            shap_values['aneurysm'],
-            "Feature Contributions to Coronary Aneurysm Prediction",
-            WATERFALL_PLOT_SIZE_SINGLE
-        )
-        _display_waterfall_explanation("coronary aneurysm")
+    st.markdown(f"##### Detailed Analysis for {title}")
+    plot_shap_waterfall(
+        values,
+        f"Feature Impact on {title}",
+        WATERFALL_PLOT_SIZE_SINGLE
+    )
+    
+    _display_waterfall_explanation(title)
 
 def _display_waterfall_explanation(condition: str):
     """Display explanation text for waterfall plots."""

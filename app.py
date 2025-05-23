@@ -53,40 +53,45 @@ render_debug_info()
 # Render input sections and collect data
 input_data = render_input_sections(FEATURES, st.session_state.invalid_fields)
 
-# Render predict button
-if render_predict_button():
-    # Clear previous invalid fields
-    st.session_state.invalid_fields.clear()
-    
-    # Validate input data
-    invalid_fields = validate_input_data(input_data, FEATURES)
-    
-    if invalid_fields:
-        st.session_state.invalid_fields = invalid_fields
-        st.error("❌ Required fields are missing. Please check the fields highlighted in red.")
-        st.rerun()
-    else:
-        try:
-            with st.spinner('Calculating predictions...'):
-                # Get predictions and SHAP values
-                results = predictor.predict(input_data)
-                
-                # Display prediction results
-                display_prediction_cards(results['probabilities'])
+# Add Execute button
+_, col2, _ = st.columns([1, 2, 1])
+with col2:
+    if st.button("Execute", use_container_width=True):
+        # Clear previous invalid fields
+        st.session_state.invalid_fields.clear()
+        
+        # Validate input data
+        invalid_fields = validate_input_data(input_data, FEATURES)
+        
+        if invalid_fields:
+            st.session_state.invalid_fields = invalid_fields
+            st.error("❌ Required fields are missing. Please check the fields highlighted in red.")
+            st.rerun()
+        else:
+            try:
+                with st.spinner('Calculating predictions...'):
+                    # Get predictions and SHAP values
+                    results = predictor.predict(input_data)
+                    
+                    # Display prediction results
+                    display_prediction_cards(results['probabilities'])
 
-                # SHAP Explanations
-                st.markdown("### Model Explanations")
-                tabs = st.tabs(["Overall View", "IVIG Resistance", "Coronary Aneurysm"])
-                
-                with tabs[0]:
-                    display_combined_shap_analysis(results['shap_values'])
-                
-                with tabs[1:]:
-                    display_detailed_shap_analysis(results['shap_values'])
+                    # SHAP Explanations
+                    st.markdown("### Model Explanations")
+                    tab1, tab2, tab3 = st.tabs(["Overall View", "IVIG Resistance", "Coronary Aneurysm"])
+                    
+                    with tab1:
+                        display_combined_shap_analysis(results['shap_values'])
+                    
+                    with tab2:
+                        display_detailed_shap_analysis(results['shap_values'], 'ivig')
+                    
+                    with tab3:
+                        display_detailed_shap_analysis(results['shap_values'], 'aneurysm')
 
-        except Exception as e:
-            with st.sidebar:
-                with st.expander("🔧 Debug Information", expanded=True):
-                    st.error(f"Prediction Error: {str(e)}")
-                    st.error("Full error details:")
-                    st.code(traceback.format_exc())
+            except Exception as e:
+                with st.sidebar:
+                    with st.expander("🔧 Debug Information", expanded=True):
+                        st.error(f"Prediction Error: {str(e)}")
+                        st.error("Full error details:")
+                        st.code(traceback.format_exc())
