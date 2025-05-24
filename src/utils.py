@@ -62,6 +62,7 @@ def load_css():
             /* Input field styles */
             div[data-testid="stNumberInput"] input {
                 color: white !important;
+                background-color: black !important;
             }
 
             /* Required field indicator */
